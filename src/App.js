@@ -15,7 +15,7 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import { withAuthenticator } from "@aws-amplify/ui-react";
-import { Amplify } from 'aws-amplify';
+import { Amplify } from "aws-amplify";
 import { Auth } from "aws-amplify";
 import axios from "axios";
 
@@ -28,7 +28,7 @@ Amplify.configure({
 
 const apiURL = "https://0jfr46blp2.execute-api.us-east-1.amazonaws.com/";
 
-const NoteCard = ({ note, handleEdit, handleDelete, updateNoteLocally }) => {
+const NoteCard = ({ note, handleDelete, updateNoteLocally }) => {
   const [editMode, setEditMode] = useState(false);
   const [editNote, setEditNote] = useState({ ...note });
 
@@ -52,50 +52,70 @@ const NoteCard = ({ note, handleEdit, handleDelete, updateNoteLocally }) => {
   return (
     <Card elevation={3}>
       <CardContent>
-        {editMode ? (
+        {!editMode ? (
+          <>
+            <Typography variant="h6">{note.subject}</Typography>
+            <Typography>{note.contents}</Typography>
+          </>
+        ) : (
           <>
             <TextField
               label="Subject"
               variant="outlined"
               value={editNote.subject}
-              onChange={(e) => setEditNote({ ...editNote, subject: e.target.value })}
+              onChange={(e) =>
+                setEditNote({ ...editNote, subject: e.target.value })
+              }
               fullWidth
             />
             <TextField
               label="Content"
               variant="outlined"
               value={editNote.contents}
-              onChange={(e) => setEditNote({ ...editNote, contents: e.target.value })}
+              onChange={(e) =>
+                setEditNote({ ...editNote, contents: e.target.value })
+              }
               multiline
               rows={3}
               fullWidth
               sx={{ mt: 2 }}
             />
           </>
-        ) : (
-          <>
-            <Typography variant="h6">{note.subject}</Typography>
-            <Typography>{note.contents}</Typography>
-          </>
         )}
       </CardContent>
       <CardActions>
-        {editMode ? (
+        {!editMode ? (
           <>
-            <Button variant="contained" color="primary" onClick={handleSaveUpdate}>
-              Save
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setEditMode(true)}
+            >
+              Edit
             </Button>
-            <Button variant="outlined" color="error" onClick={() => setEditMode(false)}>
-              Cancel
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => handleDelete(note.note_id)}
+            >
+              Delete
             </Button>
           </>
         ) : (
           <>
-            <Button variant="contained" color="primary" onClick={() => setEditMode(true)}>
-              Edit
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSaveUpdate}
+            >
+              Save
             </Button>
-            <Button variant="contained" color="error" onClick={() => handleDelete(note.note_id)}>
-              Delete
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={() => setEditMode(false)}
+            >
+              Cancel
             </Button>
           </>
         )}
@@ -193,9 +213,13 @@ function App() {
               Notes App
             </Typography>
             {user ? (
-              <Button color="inherit" onClick={() => Auth.signOut()}>Logout</Button>
+              <Button color="inherit" onClick={() => Auth.signOut()}>
+                Logout
+              </Button>
             ) : (
-              <Button color="inherit" onClick={() => Auth.federatedSignIn()}>Login</Button>
+              <Button color="inherit" onClick={() => Auth.federatedSignIn()}>
+                Login
+              </Button>
             )}
           </Toolbar>
         </AppBar>
@@ -206,20 +230,28 @@ function App() {
                 label="Subject"
                 variant="outlined"
                 value={newNote.subject}
-                onChange={(e) => setNewNote({ ...newNote, subject: e.target.value })}
+                onChange={(e) =>
+                  setNewNote({ ...newNote, subject: e.target.value })
+                }
                 fullWidth
               />
               <TextField
                 label="Content"
                 variant="outlined"
                 value={newNote.contents}
-                onChange={(e) => setNewNote({ ...newNote, contents: e.target.value })}
+                onChange={(e) =>
+                  setNewNote({ ...newNote, contents: e.target.value })
+                }
                 multiline
                 rows={3}
                 fullWidth
                 sx={{ mt: 2 }}
               />
-              <Button variant="contained" sx={{ mt: 2 }} onClick={handleCreateNote}>
+              <Button
+                variant="contained"
+                sx={{ mt: 2 }}
+                onClick={handleCreateNote}
+              >
                 Create Note
               </Button>
             </Paper>
@@ -231,9 +263,6 @@ function App() {
             <Grid item xs={12} key={note.note_id}>
               <NoteCard
                 note={note}
-                handleEdit={
-                  () => {} /* Add edit functionality here if needed */
-                }
                 handleDelete={handleDeleteNote}
                 updateNoteLocally={updateNoteLocally}
               />
